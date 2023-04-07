@@ -114,6 +114,20 @@ int Lua_nextFrame(lua_State* L){
 }
 AddLuaFunction(Lua_nextFrame,nextFrame);
 
+int Lua_NDSTapDown(lua_State* L){
+    int x =luaL_checkinteger(L,1);
+    int y =luaL_checkinteger(L,2);
+    NDS::TouchScreen(x,y);
+    
+    return 0;
+}
+AddLuaFunction(Lua_NDSTapDown,NDSTapDown);
+
+int Lua_NDSTapUp(lua_State* L){
+    NDS::ReleaseScreen();
+    return 0;
+}
+AddLuaFunction(Lua_NDSTapUp,NDSTapUp);
 
 
 bool MainLuaRunning=false;
