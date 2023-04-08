@@ -36,6 +36,7 @@ u32 HotkeyPress, HotkeyRelease;
 
 u32 InputMask;
 
+std::map<u8,bool> KeyboardMask; //For Lua Scripts
 
 void Init()
 {
@@ -47,6 +48,9 @@ void Init()
     JoyHotkeyMask = 0;
     HotkeyMask = 0;
     LastHotkeyMask = 0;
+    for (int i=0;i<256;i++){
+        KeyboardMask[i]=false;
+    }
 }
 
 
@@ -97,6 +101,8 @@ int GetEventKeyVal(QKeyEvent* event)
 
 void KeyPress(QKeyEvent* event)
 {
+    if (event->key()<256)
+        KeyboardMask[event->key()]=true;
     int keyHK = GetEventKeyVal(event);
     int keyKP = keyHK;
     if (event->modifiers() != Qt::KeypadModifier)
@@ -113,6 +119,8 @@ void KeyPress(QKeyEvent* event)
 
 void KeyRelease(QKeyEvent* event)
 {
+    if (event->key()<256)
+        KeyboardMask[event->key()]=false;
     int keyHK = GetEventKeyVal(event);
     int keyKP = keyHK;
     if (event->modifiers() != Qt::KeypadModifier)

@@ -4,7 +4,9 @@
 #include <vector>
 #include <map>
 #include <QtGui>
+#include <SDL2/SDL.h>
 #include <SDL_joystick.h>//should be in Input.h
+#include <SDL_keyboard.h>
 #include "Input.h"
 #include <QDialog>
 using namespace LuaFront;
@@ -149,12 +151,11 @@ int Lua_line(lua_State* L){
 }
 AddFrontEndLuaFunct(Lua_line,line);
 int Lua_getKey(lua_State* L){
-    int key = lua_tonumber(L,-1);
-    bool isdown = false;
-    if( GetKeyState(key) & 0x8000 ){
-        isdown = true;
+    lua_createtable(L,0,256);
+    for (int i=0;i<256;i++){
+        lua_pushboolean(L,Input::KeyboardMask[i]);
+        lua_seti(L,-2,i);
     }
-    lua_pushboolean(L,isdown);
     return 1;
 }
 AddFrontEndLuaFunct(Lua_getKey,getkey);

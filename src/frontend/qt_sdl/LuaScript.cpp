@@ -3,7 +3,7 @@
 #include <vector>
 #include "NDS.h"
 #include "LuaFrontEnd.h"
-#include <direct.h>
+#include <filesystem>
 #include <QDir>
 #include "LuaDialog.h"
 
@@ -152,7 +152,7 @@ void LuaScript::StartLuaScript(QFileInfo script){
         lua_pushcfunction(L,function->funct);
         lua_setglobal(L,function->name);
     }
-    _chdir(&filedir[0]);
+    std::filesystem::current_path(&filedir[0]);
     if (luaL_dofile(L,&fileName[0])==LUA_OK){
         LuaScript::MainLuaState=L;
     }else{

@@ -28,6 +28,7 @@ extern int JoystickID;
 extern SDL_Joystick* Joystick;
 
 extern u32 InputMask;
+extern std::map<u8,bool> KeyboardMask;
 
 void Init();
 

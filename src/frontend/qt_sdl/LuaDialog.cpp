@@ -182,7 +182,7 @@ int Dialog_Button(lua_State* L){
     QDialog* dialog = Dialogs[id];
     LuaButton* button = new LuaButton(dialog,string,ref,L);
     button->setGeometry(x,y,w,h);
-    dialog->connect(button,&QPushButton::clicked,button,LuaButton::luaFunction);
+    dialog->connect(button,&QPushButton::clicked,button,&LuaButton::luaFunction);
     lua_pushinteger(L,button->index);
     button->show();
     return 1;
