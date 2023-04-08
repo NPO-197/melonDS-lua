@@ -103,6 +103,8 @@ void KeyPress(QKeyEvent* event)
 {
     if (event->key()<256)
         KeyboardMask[event->key()]=true;
+    if ((event->key()&0x01000000)>0 && (event->key()&0xff)<0x41) //special keys
+            KeyboardMask[0xff - (event->key()&0xff)]=true; 
     int keyHK = GetEventKeyVal(event);
     int keyKP = keyHK;
     if (event->modifiers() != Qt::KeypadModifier)
@@ -121,6 +123,8 @@ void KeyRelease(QKeyEvent* event)
 {
     if (event->key()<256)
         KeyboardMask[event->key()]=false;
+    if ((event->key()&0x01000000)>0 && (event->key()&0xff)<0x41)//special keys
+        KeyboardMask[0xff - (event->key()&0xff)]=false;
     int keyHK = GetEventKeyVal(event);
     int keyKP = keyHK;
     if (event->modifiers() != Qt::KeypadModifier)
