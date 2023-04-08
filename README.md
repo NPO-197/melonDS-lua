@@ -40,7 +40,7 @@ As for the rest, the interface should be pretty straightforward. If you have a q
    * Arch Linux: `sudo pacman -S base-devel cmake extra-cmake-modules git libpcap sdl2 qt5-base qt5-multimedia libslirp libarchive`
 3. Download the melonDS repository and prepare:
    ```bash
-   git clone https://github.com/melonDS-emu/melonDS
+   git clone https://github.com/NPO-197/melonDS-lua
    cd melonDS
    ```
 
@@ -60,7 +60,7 @@ As for the rest, the interface should be pretty straightforward. If you have a q
    ```
 5. Download the melonDS repository and prepare:
    ```bash
-   git clone https://github.com/melonDS-emu/melonDS
+   git clone https://github.com/NPO-197/melonDS-lua
    cd melonDS
    ```
 #### Dynamic builds (with DLLs)
@@ -88,7 +88,7 @@ If everything went well, melonDS should now be in the `build` folder.
 2. Install dependencies: `brew install git pkg-config cmake sdl2 qt@6 libslirp libarchive`
 3. Download the melonDS repository and prepare:
    ```zsh
-   git clone https://github.com/melonDS-emu/melonDS
+   git clone https://github.com/NPO-197/melonDS-lua
    cd melonDS
    ```
 4. Compile:
