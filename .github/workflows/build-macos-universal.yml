@@ -7,16 +7,17 @@ on:
   pull_request:
     branches:
       - master
+  workflow_dispatch: # Put here!!
 
 jobs:
   prepare:
     runs-on: [self-hosted, macOS, ARM64]
-    
+
     steps:
       - name: Clean workspace
         run: rm -rf ${{runner.workspace}}/build
 
-      - uses: actions/checkout@v3      
+      - uses: actions/checkout@v3
 
 
   build-arm64:
@@ -70,4 +71,3 @@ jobs:
         with:
           name: macOS-universal
           path: ${{runner.workspace}}/build/universal/melonDS.dmg
-      
