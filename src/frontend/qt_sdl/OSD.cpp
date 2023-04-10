@@ -401,7 +401,8 @@ void DrawNative(QPainter& painter)
     for (auto lo = LuaFront::LuaOverlays.begin(); lo != LuaFront::LuaOverlays.end();)
     {
         LuaFront::OverlayCanvas& overlay = *lo;
-        if (overlay.isActive){painter.drawImage(overlay.rectangle,*overlay.image);}
+        if (overlay.isActive)
+            painter.drawImage(overlay.rectangle,*overlay.image);
         lo++;
     }
     
@@ -445,7 +446,27 @@ void DrawGL(float w, float h)
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-
+    
+    for (auto lo = LuaFront::LuaOverlays.begin(); lo != LuaFront::LuaOverlays.end();)
+    {
+        LuaFront::OverlayCanvas& overlay = *lo;
+        if (overlay.isActive){
+            glGenTextures(1,&overlay.GLtexture);
+            glBindTexture(GL_TEXTURE_2D, overlay.GLtexture);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, overlay.rectangle.width(), overlay.rectangle.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, overlay.image->bits());
+            glUniform2i(uOSDPos,overlay.rectangle.left(),overlay.rectangle.top());
+            glUniform2i(uOSDSize,overlay.rectangle.width(),overlay.rectangle.height());
+            glDrawArrays(GL_TRIANGLES, 0, 2*3);
+            glDeleteTextures(1,&overlay.GLtexture);
+        }
+            
+        lo++;
+    }
+    
     for (auto it = ItemQueue.begin(); it != ItemQueue.end(); )
     {
         Item& item = *it;

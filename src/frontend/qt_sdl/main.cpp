@@ -839,6 +839,9 @@ void EmuThread::run()
                 ContextRequest = 0;
             }
         }
+        //luaScript
+        if (luaThread!=nullptr)
+            luaThread->luaUpdate();
     }
 
     EmuStatus = 0;
@@ -1276,9 +1279,6 @@ void ScreenPanelNative::paintEvent(QPaintEvent* event)
 
     OSD::Update();
     OSD::DrawNative(painter);
-    if (luaThread!=nullptr){
-        luaThread->luaUpdate();
-    }
 }
 
 void ScreenPanelNative::resizeEvent(QResizeEvent* event)

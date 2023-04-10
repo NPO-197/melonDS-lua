@@ -47,14 +47,13 @@ OverlayCanvas::OverlayCanvas(int x,int y,int width,int height,bool isActive){
     this->isActive=isActive;
     image = new QImage(width,height,QImage::Format_ARGB32_Premultiplied);
     image->fill(0xFFFFFF00);
-    rectangle = QRect(x,y,width,height);    
+    rectangle = QRect(x,y,width,height);
 }
 
 
 std::vector<OverlayCanvas> LuaFront::LuaOverlays;
 OverlayCanvas* CurrentCanvas;
 
-//OverlayCanvas LuaFront::MainLuaOverlay(0,0,200,200);
 
 int Lua_popup(lua_State* L){
     u32 color = lua_tonumber(L,-2);

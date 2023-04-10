@@ -14,6 +14,7 @@ struct OverlayCanvas{
     QImage* image;
     QRect rectangle;
     bool isActive = true;//Only Active overlays are drawn to the screen.
+    unsigned int GLtexture;
     OverlayCanvas(int,int,int,int,bool);
 };
 extern std::vector<OverlayCanvas> LuaOverlays;
