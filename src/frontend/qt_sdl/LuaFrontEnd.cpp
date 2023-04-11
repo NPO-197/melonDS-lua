@@ -45,15 +45,33 @@ void LuaFront::onMouseMove(QMouseEvent* event){
 
 OverlayCanvas::OverlayCanvas(int x,int y,int width,int height,bool isActive){
     this->isActive=isActive;
-    image = new QImage(width,height,QImage::Format_ARGB32_Premultiplied);
-    image->fill(0xFFFFFF00);
+    buffer1 = new QImage(width,height,QImage::Format_ARGB32_Premultiplied);
+    buffer2 = new QImage(width,height,QImage::Format_ARGB32_Premultiplied);
+    buffer1->fill(0xffffff00);
+    buffer2->fill(0xffffff00);
+    image = buffer1;
+    display = buffer2;
     rectangle = QRect(x,y,width,height);
 }
-
+void OverlayCanvas::flip(){
+    if (image == buffer1){
+        image = buffer2;
+        display = buffer1;
+    }else{
+        image = buffer1;
+        display = buffer2;
+    }
+}
 
 std::vector<OverlayCanvas> LuaFront::LuaOverlays;
 OverlayCanvas* CurrentCanvas;
 
+int Lua_MelonPrint(lua_State* L){
+    QString string = luaL_checkstring(L,1);
+    luaThread->luaPrint(string);
+    return 0;
+}
+AddFrontEndLuaFunct(Lua_MelonPrint,MelonPrint);
 
 int Lua_popup(lua_State* L){
     u32 color = lua_tonumber(L,-2);
@@ -92,6 +110,12 @@ int Lua_ClearOverlay(lua_State* L){
     return 0;
 }
 AddFrontEndLuaFunct(Lua_ClearOverlay,clearOverlay);
+
+int Lua_Flip(lua_State* L){
+    CurrentCanvas->flip();
+    return 0;
+}
+AddFrontEndLuaFunct(Lua_Flip,Flip);
 
 int Lua_rect(lua_State* L){
     u32 color = lua_tonumber(L,-1);

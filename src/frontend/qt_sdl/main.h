@@ -338,6 +338,7 @@ private slots:
     void onLuaChangeScreenLayout();
     void onLuaDialogFunction();
     void onLuaStartDialog();
+    void onLuaStart();
 
 private:
     void closeEvent(QCloseEvent* event);

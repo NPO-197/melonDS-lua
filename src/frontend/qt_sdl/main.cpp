@@ -102,6 +102,7 @@
 #include "LuaScript.h"
 #include "LuaFrontEnd.h"
 #include "LuaDialog.h"
+#include "LuaConsol.h"
 
 // TODO: uniform variable spelling
 
@@ -840,7 +841,7 @@ void EmuThread::run()
             }
         }
         //luaScript
-        if (luaThread!=nullptr)
+        if (luaThread!=nullptr && !luaThread->flagTerminated)
             luaThread->luaUpdate();
     }
 
@@ -3002,24 +3003,30 @@ void MainWindow::onOpenLua()
 {
     emuThread->emuPause();
     QFileInfo file = QFileDialog::getOpenFileName(this, "Load Lua Script",QDir::currentPath());
+    emuThread->emuRun();
     if (!file.exists()){
-        emuThread->emuRun();
         return;
     }
+    
     if (luaThread != nullptr){
         luaThread->terminate();//might cause issues!
         luaThread->wait();
         LuaFront::LuaOverlays.clear();
     }
-    
     luaThread = new LuaThread(file);
+    LuaConsolDialog* luaScriptDialog = new LuaConsolDialog(nullptr,&file);
+    luaScriptDialog->open();
+    connect(luaScriptDialog,LuaConsolDialog::signalLuaStart,this,MainWindow::onLuaStart);
+}
+
+void MainWindow::onLuaStart()
+{
+    if (luaThread==nullptr)
+        return;
     connect(luaThread,SIGNAL(signalChangeScreenLayout()),this,SLOT(onLuaChangeScreenLayout()));
     connect(luaThread,SIGNAL(signalDialogFunction()),this,SLOT(onLuaDialogFunction()));
     connect(luaThread,SIGNAL(signalStartDialog()),this,SLOT(onLuaStartDialog()));
     luaThread->start();
-    emuThread->emuRun();
-
-        
 }
 
 void MainWindow::onLuaChangeScreenLayout()

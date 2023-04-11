@@ -39,7 +39,8 @@ set(SOURCES_QT_SDL
     LuaFrontEnd.cpp
     LuaScript.cpp
     LuaDialog.cpp
-    
+    LuaConsol.cpp
+
     ArchiveUtil.h
     ArchiveUtil.cpp
 

@@ -9,17 +9,19 @@
 
 LuaThread* luaThread = nullptr;
 bool frameFlag = false;
+bool Pausa = false;
 
 void LuaThread::luaUpdate()
 {
     flagUpdate = true;
-    frameFlag = true;
+    frameFlag = true; //used for yeild 
     exit();
 }
 
 void LuaThread::luaStop()
 {
     flagRunning=false;
+    exit();
 }
 
 void LuaThread::luaYeild()
@@ -32,17 +34,29 @@ void LuaThread::luaLayoutChange()
     emit signalChangeScreenLayout();
 }
 
+void LuaThread::luaPrint(QString string)
+{
+    emit signalPrint(string);
+}
+
+void LuaThread::luaTogglePause()
+{
+    Pausa = !Pausa;
+    exit();
+}
+
 void LuaThread::run()
 {
     LuaScript::StartLuaScript(scriptFile);
     emit signalStarted();
     flagRunning=true;
+    Pausa = false;
     while (flagRunning){
-        if(flagUpdate){
+        if(flagUpdate and not(Pausa)){
             flagUpdate=false;
             LuaScript::TriggerLuaScript();
         }
-        LuaThread::exec();
+        exec();
     }
 }
 
@@ -130,10 +144,7 @@ int Lua_NDSTapUp(lua_State* L){
 AddLuaFunction(Lua_NDSTapUp,NDSTapUp);
 
 
-bool MainLuaRunning=false;
-
 lua_State* LuaScript::MainLuaState = nullptr;
-
 
 void LuaScript::StartLuaScript(QFileInfo script){
     std::string fileName = script.fileName().toStdString();
@@ -156,6 +167,7 @@ void LuaScript::StartLuaScript(QFileInfo script){
     if (luaL_dofile(L,&fileName[0])==LUA_OK){
         LuaScript::MainLuaState=L;
     }else{
+        luaThread->luaPrint(lua_tostring(L,-1));
         printf("Error: %s\n", lua_tostring(L, -1));
         LuaScript::MainLuaState=nullptr;
     }    
@@ -167,11 +179,11 @@ void LuaScript::TriggerLuaScript(){
     if (LuaScript::MainLuaState==nullptr){
         return;
     }
-    //todo add proper checks for exceptions
     lua_getglobal(LuaScript::MainLuaState,"emuTrigger");//put function on stack and call
     if(lua_pcall(LuaScript::MainLuaState,0,0,0)==0){
     }
     else{
+        luaThread->luaPrint(lua_tostring(LuaScript::MainLuaState,-1));
         printf( "Error: %s\n", lua_tostring(LuaScript::MainLuaState, -1));
 
     }

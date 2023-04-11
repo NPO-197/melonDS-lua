@@ -402,7 +402,7 @@ void DrawNative(QPainter& painter)
     {
         LuaFront::OverlayCanvas& overlay = *lo;
         if (overlay.isActive)
-            painter.drawImage(overlay.rectangle,*overlay.image);
+            painter.drawImage(overlay.rectangle,*overlay.display);
         lo++;
     }
     
@@ -457,7 +457,7 @@ void DrawGL(float w, float h)
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, overlay.rectangle.width(), overlay.rectangle.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, overlay.image->bits());
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, overlay.rectangle.width(), overlay.rectangle.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, overlay.display->bits());
             glUniform2i(uOSDPos,overlay.rectangle.left(),overlay.rectangle.top());
             glUniform2i(uOSDSize,overlay.rectangle.width(),overlay.rectangle.height());
             glDrawArrays(GL_TRIANGLES, 0, 2*3);

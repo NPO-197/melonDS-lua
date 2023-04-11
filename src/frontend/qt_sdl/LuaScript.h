@@ -15,22 +15,27 @@ public:
     void luaUpdate();
     void luaStop();
     void luaYeild();
+    void luaTogglePause();
     void luaLayoutChange();
     int luaDialogFunction(lua_State*,int (*)(lua_State*));
     void luaDialogReturned();
     int luaDialogStart(lua_State*,int);
     void luaDialogClosed();
+    void luaPrint(QString string);
+    bool flagTerminated = false;
 signals:
     void signalStarted();
     void signalChangeScreenLayout();
     void signalDialogFunction();
     void signalStartDialog();
+    void signalPrint(QString string);
 private:
     QFileInfo scriptFile;
     bool flagRunning;
     bool flagUpdate;
     bool flagDialogReturn;
     bool flagDialogClosed;
+    bool flagPaused=false;
 };
 
 extern LuaThread* luaThread;
