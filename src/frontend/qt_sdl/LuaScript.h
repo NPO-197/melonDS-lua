@@ -1,7 +1,7 @@
 #ifndef LUASCRIPT_H
 #define LUASCRIPT_H
 #include <vector>
-#include <string>
+#include <string.h>
 #include "lua-5.4.4/src/lua.hpp"
 #include <QFileInfo>
 #include <QtCore>
@@ -23,12 +23,16 @@ public:
     void luaDialogClosed();
     void luaPrint(QString string);
     bool flagTerminated = false;
+    void luaStateSave(QString filename);
+    void luaStateLoad(QString filename);
 signals:
     void signalStarted();
     void signalChangeScreenLayout();
     void signalDialogFunction();
     void signalStartDialog();
     void signalPrint(QString string);
+    void signalStateSave(QString filename);
+    void signalStateLoad(QString filename);
 private:
     QFileInfo scriptFile;
     bool flagRunning;
@@ -40,17 +44,18 @@ private:
 
 extern LuaThread* luaThread;
 
-namespace LuaScript{
+namespace LuaScript
+{
 extern lua_State* MainLuaState;
 typedef int(*lfunctpntr)(lua_State*);
-struct LuaFunction{
+struct LuaFunction
+{
     lfunctpntr funct;
     const char* name;
     LuaFunction(lfunctpntr,const char*,std::vector<LuaFunction*>*);
 };
 void StartLuaScript(QFileInfo);
 void TriggerLuaScript();
-
 }
 
 #endif

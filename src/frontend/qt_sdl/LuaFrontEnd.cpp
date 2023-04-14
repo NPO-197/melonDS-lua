@@ -5,7 +5,7 @@
 #include <map>
 #include <QtGui>
 #include <SDL2/SDL.h>
-#include <SDL_joystick.h>//should be in Input.h
+#include <SDL_joystick.h>
 #include <SDL_keyboard.h>
 #include "Input.h"
 #include <QDialog>
@@ -22,20 +22,24 @@ QPoint SelectionDelta;
 void LuaFront::onMousePress(QMouseEvent* event){
     if (event->button() != Qt::LeftButton) return;
     if (!(event->modifiers() & Qt::ControlModifier)) return;
-    for (auto lo = LuaFront::LuaOverlays.begin(); lo != LuaFront::LuaOverlays.end();){
+    for (auto lo = LuaFront::LuaOverlays.begin(); lo != LuaFront::LuaOverlays.end();)
+    {
         LuaFront::OverlayCanvas& overlay = *lo;
-        if (overlay.isActive && overlay.rectangle.contains(event->pos())){
+        if (overlay.isActive && overlay.rectangle.contains(event->pos()))
+        {
             SelectedCanvas = &overlay;
             SelectionDelta = overlay.rectangle.topLeft() - event->pos();
         }
         lo++;
     }
 }
-void LuaFront::onMouseRelease(QMouseEvent* event){
+void LuaFront::onMouseRelease(QMouseEvent* event)
+{
     if (event->button() != Qt::LeftButton) return;
     SelectedCanvas= nullptr;
 }
-void LuaFront::onMouseMove(QMouseEvent* event){
+void LuaFront::onMouseMove(QMouseEvent* event)
+{
     if (!(event->buttons() & Qt::LeftButton)) return;
     if (SelectedCanvas==nullptr) return;
     SelectedCanvas->rectangle.moveTo(event->pos()+SelectionDelta);
@@ -43,7 +47,8 @@ void LuaFront::onMouseMove(QMouseEvent* event){
 
 
 
-OverlayCanvas::OverlayCanvas(int x,int y,int width,int height,bool isActive){
+OverlayCanvas::OverlayCanvas(int x,int y,int width,int height,bool isActive)
+{
     this->isActive=isActive;
     buffer1 = new QImage(width,height,QImage::Format_ARGB32_Premultiplied);
     buffer2 = new QImage(width,height,QImage::Format_ARGB32_Premultiplied);
@@ -53,11 +58,15 @@ OverlayCanvas::OverlayCanvas(int x,int y,int width,int height,bool isActive){
     display = buffer2;
     rectangle = QRect(x,y,width,height);
 }
-void OverlayCanvas::flip(){
-    if (image == buffer1){
+void OverlayCanvas::flip()
+{
+    if (image == buffer1)
+    {
         image = buffer2;
         display = buffer1;
-    }else{
+    }
+    else
+    {
         image = buffer1;
         display = buffer2;
     }
@@ -66,14 +75,16 @@ void OverlayCanvas::flip(){
 std::vector<OverlayCanvas> LuaFront::LuaOverlays;
 OverlayCanvas* CurrentCanvas;
 
-int Lua_MelonPrint(lua_State* L){
+int Lua_MelonPrint(lua_State* L)
+{
     QString string = luaL_checkstring(L,1);
     luaThread->luaPrint(string);
     return 0;
 }
 AddFrontEndLuaFunct(Lua_MelonPrint,MelonPrint);
 
-int Lua_popup(lua_State* L){
+int Lua_popup(lua_State* L)
+{
     u32 color = lua_tonumber(L,-2);
     const char* msg = lua_tostring(L,-1);
     OSD::AddMessage(color, msg);
@@ -81,10 +92,12 @@ int Lua_popup(lua_State* L){
 }
 AddFrontEndLuaFunct(Lua_popup,popup);
 
-int Lua_MakeCanvas(lua_State* L){
+int Lua_MakeCanvas(lua_State* L)
+{
     int offset = 0;
     bool a = true;
-    if (lua_isboolean(L,-1)){
+    if (lua_isboolean(L,-1))
+    {
         offset=-1;
         bool a = lua_toboolean(L,-1);
     }
@@ -98,26 +111,30 @@ int Lua_MakeCanvas(lua_State* L){
     return 1;
 }
 AddFrontEndLuaFunct(Lua_MakeCanvas,makecanvas);
-int Lua_SetCanvas(lua_State* L){
+int Lua_SetCanvas(lua_State* L)
+{
     int index=lua_tonumber(L,-1);
     CurrentCanvas = &LuaOverlays.at(index);
     return 0;
 }
 AddFrontEndLuaFunct(Lua_SetCanvas,setcanvas);
 
-int Lua_ClearOverlay(lua_State* L){
+int Lua_ClearOverlay(lua_State* L)
+{
     CurrentCanvas->image->fill(0x00000000);
     return 0;
 }
 AddFrontEndLuaFunct(Lua_ClearOverlay,clearOverlay);
 
-int Lua_Flip(lua_State* L){
+int Lua_Flip(lua_State* L)
+{
     CurrentCanvas->flip();
     return 0;
 }
 AddFrontEndLuaFunct(Lua_Flip,Flip);
 
-int Lua_rect(lua_State* L){
+int Lua_rect(lua_State* L)
+{
     u32 color = lua_tonumber(L,-1);
     int x = lua_tonumber(L,-5);
     int y = lua_tonumber(L,-4);
@@ -130,7 +147,8 @@ int Lua_rect(lua_State* L){
 }
 AddFrontEndLuaFunct(Lua_rect,Rect);
 
-int Lua_fillrect(lua_State* L){
+int Lua_fillrect(lua_State* L)
+{
     u32 color = lua_tonumber(L,-1);
     int x = lua_tonumber(L,-5);
     int y = lua_tonumber(L,-4);
@@ -143,7 +161,8 @@ int Lua_fillrect(lua_State* L){
 }
 AddFrontEndLuaFunct(Lua_fillrect,fillRect);
 
-int Lua_text(lua_State* L){
+int Lua_text(lua_State* L)
+{
     int x = lua_tonumber(L,-6);
     int y = lua_tonumber(L,-5);
     const char* text = lua_tostring(L,-4);
@@ -161,7 +180,8 @@ int Lua_text(lua_State* L){
 }
 AddFrontEndLuaFunct(Lua_text,text);
 
-int Lua_line(lua_State* L){
+int Lua_line(lua_State* L)
+{
     int x1 = lua_tonumber(L,-5);
     int y1 = lua_tonumber(L,-4);
     int x2 = lua_tonumber(L,-3);
@@ -173,7 +193,8 @@ int Lua_line(lua_State* L){
     return 0;
 }
 AddFrontEndLuaFunct(Lua_line,line);
-int Lua_getKey(lua_State* L){
+int Lua_getKey(lua_State* L)
+{
     lua_createtable(L,0,256);
     for (int i=0;i<256;i++){
         lua_pushboolean(L,Input::KeyboardMask[i]);
@@ -183,7 +204,8 @@ int Lua_getKey(lua_State* L){
 }
 AddFrontEndLuaFunct(Lua_getKey,getkey);
 
-int Lua_drawImage(lua_State* L){
+int Lua_drawImage(lua_State* L)
+{
     QString path = lua_tostring(L,-5);
     int x = lua_tointeger(L,-4);
     int y = lua_tointeger(L,-3);
@@ -191,9 +213,12 @@ int Lua_drawImage(lua_State* L){
     int sh=lua_tointeger(L,-1);
     QPainter painter(CurrentCanvas->image);
     QImage image;
-    if(ImageHash.contains(path)){
+    if(ImageHash.contains(path))
+    {
         image=ImageHash[path];
-    }else{
+    }
+    else
+    {
         image=QImage(path);
         ImageHash[path]=image;
     }
@@ -204,7 +229,8 @@ int Lua_drawImage(lua_State* L){
 }
 AddFrontEndLuaFunct(Lua_drawImage,drawImage);
 
-int Lua_clearImageHash(lua_State* L){
+int Lua_clearImageHash(lua_State* L)
+{
     ImageHash.clear();
     return 0;
 }
@@ -215,7 +241,8 @@ AddFrontEndLuaFunct(Lua_clearImageHash,clearHash);
 
 QWidget* LuaFront::panel=nullptr;
 
-int Lua_canvasPos(lua_State* L){
+int Lua_canvasPos(lua_State* L)
+{
     QPoint pos = CurrentCanvas->rectangle.topLeft();
     lua_createtable(L,0,2);
     lua_pushinteger(L,pos.x());
@@ -227,11 +254,13 @@ int Lua_canvasPos(lua_State* L){
 AddFrontEndLuaFunct(Lua_canvasPos,canvasPos);
 
 
-int Lua_getMouse(lua_State* L){
+int Lua_getMouse(lua_State* L)
+{
     Qt::MouseButtons btns = QGuiApplication::mouseButtons();
     QPoint pos = LuaFront::panel->mapFromGlobal(QCursor::pos(QGuiApplication::primaryScreen()));
     const char* keys[6]={"Left","Middle","Right","XButton1","XButton2","Wheel"};
-    bool vals[6]={
+    bool vals[6]=
+    {
         btns.testFlag(Qt::LeftButton),
         btns.testFlag(Qt::MiddleButton),
         btns.testFlag(Qt::RightButton),
@@ -244,7 +273,8 @@ int Lua_getMouse(lua_State* L){
     lua_setfield(L, -2, "X");
     lua_pushinteger(L, pos.y());
     lua_setfield(L, -2, "Y");
-    for(int i=0;i<6;i++){
+    for(int i=0;i<6;i++)
+    {
         lua_pushboolean(L,vals[i]);
         lua_setfield(L,-2,keys[i]);
     }
@@ -254,15 +284,18 @@ AddFrontEndLuaFunct(Lua_getMouse,getmouse);
 
 
 
-int Lua_getJoy(lua_State* L){
+int Lua_getJoy(lua_State* L)
+{
     u32 buttonMask=Input::InputMask;//copy of current button state.
-    const char* keys[12]{//Buttons in order of mask.
+    const char* keys[12] =
+    {//Buttons in order of mask.
         "A","B","Select","Start",
         "Right","Left","Up","Down",
         "R","L","X","Y"
     };
     lua_createtable(L, 0, 12);
-    for(u32 i=0;i<12;i++){
+    for(u32 i=0;i<12;i++)
+    {
         lua_pushboolean(L,0>=(buttonMask&(1<<i)));
         lua_setfield(L,-2,keys[i]);
     }
@@ -270,7 +303,8 @@ int Lua_getJoy(lua_State* L){
 }
 AddFrontEndLuaFunct(Lua_getJoy,getJoy);
 
-int Lua_setPadding(lua_State* L){
+int Lua_setPadding(lua_State* L)
+{
     LuaFront::RightPadding = lua_tointeger(L,-2);
     LuaFront::BottomPadding = lua_tointeger(L,-1);
     luaThread->luaLayoutChange();

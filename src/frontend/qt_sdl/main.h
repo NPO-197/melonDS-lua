@@ -272,6 +272,8 @@ private slots:
     void onEjectGBACart();
     void onSaveState();
     void onLoadState();
+    void onLuaSaveState(QString filename);
+    void onLuaLoadState(QString filename);
     void onUndoStateLoad();
     void onImportSavefile();
     void onQuit();

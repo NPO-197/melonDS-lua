@@ -6,7 +6,8 @@
 #include <QComboBox>
 #include <QFileDialog>
 
-class LuaLabel : public QLabel{
+class LuaLabel : public QLabel
+{
     Q_OBJECT
 public:
     LuaLabel(QDialog* d,QString s);
@@ -17,7 +18,8 @@ public slots:
     void luaFunction();
 };
 
-class LuaButton : public QPushButton{
+class LuaButton : public QPushButton
+{
     Q_OBJECT
 public:
     LuaButton(QDialog*,QString,int,lua_State*);
@@ -28,7 +30,8 @@ public slots:
     void luaFunction();
 };
 
-class LuaLineEdit : public QLineEdit{
+class LuaLineEdit : public QLineEdit
+{
     Q_OBJECT
 public:
     LuaLineEdit(QDialog*);
@@ -39,7 +42,8 @@ public slots:
     void luaFunction();
 };
 
-class LuaComboBox : public QComboBox{
+class LuaComboBox : public QComboBox
+{
     Q_OBJECT
 public:
     LuaComboBox(QDialog*,QStringList);
@@ -50,12 +54,14 @@ public slots:
     void luaFunction();
 };
 
-namespace LuaDialog{
+namespace LuaDialog
+{
 extern std::vector<LuaScript::LuaFunction*> LuaDialogFunctions;
 void DialogFunction();
 void StartDialog();
 enum LuaWidgetType{Dialog,Dropdown,Label,LineEdit,TextBox,CheckBox,Button,PictureBox};
-struct WidgetContainer{
+struct WidgetContainer
+{
     LuaWidgetType type;
     void* widget;
     WidgetContainer(LuaWidgetType,void*);

@@ -14,7 +14,8 @@ extern QWidget* panel;
 extern int RightPadding;
 extern int BottomPadding;
 extern std::vector<LuaScript::LuaFunction*> FrontEndFunctions;
-struct OverlayCanvas{
+struct OverlayCanvas
+{
     QImage* image;
     QImage* display;
     QImage* buffer1;

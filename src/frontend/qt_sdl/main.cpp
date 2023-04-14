@@ -2697,6 +2697,14 @@ void MainWindow::onEjectGBACart()
     updateCartInserted(true);
 }
 
+void MainWindow::onLuaSaveState(QString filename)
+{
+    emuThread->emuPause();
+    ROMManager::SaveState(filename.toStdString());
+    printf("StateSavedTo: %s",filename.toStdString());
+    emuThread->emuUnpause();
+}
+
 void MainWindow::onSaveState()
 {
     int slot = ((QAction*)sender())->data().toInt();
@@ -2738,6 +2746,13 @@ void MainWindow::onSaveState()
         OSD::AddMessage(0xFFA0A0, "State save failed");
     }
 
+    emuThread->emuUnpause();
+}
+
+void MainWindow::onLuaLoadState(QString filename)
+{
+    emuThread->emuPause();
+    ROMManager::LoadState(filename.toStdString());
     emuThread->emuUnpause();
 }
 
@@ -3026,6 +3041,8 @@ void MainWindow::onLuaStart()
     connect(luaThread,SIGNAL(signalChangeScreenLayout()),this,SLOT(onLuaChangeScreenLayout()));
     connect(luaThread,SIGNAL(signalDialogFunction()),this,SLOT(onLuaDialogFunction()));
     connect(luaThread,SIGNAL(signalStartDialog()),this,SLOT(onLuaStartDialog()));
+    connect(luaThread,SIGNAL(signalStateSave(QString)),this,SLOT(onLuaSaveState(QString)));
+    connect(luaThread,SIGNAL(signalStateLoad(QString)),this,SLOT(onLuaLoadState(QString)));
     luaThread->start();
 }
 

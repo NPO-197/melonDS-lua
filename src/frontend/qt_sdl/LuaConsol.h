@@ -5,7 +5,8 @@
 #include <QPushButton>
 #include "LuaScript.h"
 #include "LuaFrontEnd.h"
-class LuaConsol : public QPlainTextEdit {
+class LuaConsol : public QPlainTextEdit 
+{
     Q_OBJECT
 public:
     LuaConsol(QWidget* parent=nullptr);
@@ -14,7 +15,8 @@ public slots:
     void onClearConsole();
 };
 
-class LuaConsolDialog : public QDialog{
+class LuaConsolDialog : public QDialog
+{
     Q_OBJECT
 public:
     LuaConsolDialog(QWidget* parent=nullptr,QFileInfo* file=nullptr);

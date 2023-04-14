@@ -9,47 +9,53 @@ int (*CurrentDialogFunction)(lua_State*)=nullptr;
 int DialogReturn;
 int CurrentRunningDialog=0;
 int DialogRetVal=0;
-void LuaThread::luaDialogReturned(){
+void LuaThread::luaDialogReturned()
+{
     flagDialogReturn=true;
     exit();
 }
 
 //SomeDialog Functions Must be executed by GUI Thread.
-int LuaThread::luaDialogFunction(lua_State* L,int (*dialogFunction)(lua_State*)){
+int LuaThread::luaDialogFunction(lua_State* L,int (*dialogFunction)(lua_State*))
+{
     flagDialogReturn=false;
     CurrentDialogFunction=dialogFunction;
     LuaScript::MainLuaState=L;
     emit signalDialogFunction();
-    while (!flagDialogReturn){
+    while (!flagDialogReturn)
         exec();
-    }
     return DialogReturn;
 }
 //So dialog functions can be executed by GUI Thread
-void LuaDialog::DialogFunction(){
+void LuaDialog::DialogFunction()
+{
     DialogReturn = CurrentDialogFunction(LuaScript::MainLuaState);
     luaThread->luaDialogReturned();
 }
 
 //Start Dialog From GUI Thread
-int LuaThread::luaDialogStart(lua_State* L,int dialog){
+int LuaThread::luaDialogStart(lua_State* L,int dialog)
+{
     flagDialogClosed = false;
     CurrentRunningDialog = dialog;
     emit signalStartDialog();
-    while (!flagDialogClosed){
+    while (!flagDialogClosed)
+    {
         exec();
     }
     lua_pushinteger(L,DialogRetVal);
     return 1;
 }
 
-void LuaThread::luaDialogClosed(){
+void LuaThread::luaDialogClosed()
+{
     flagDialogClosed=true;
     exit();
 }
 
 
-int lua_ExecDialog(lua_State* L){
+int lua_ExecDialog(lua_State* L)
+{
     int dialog = luaL_checkinteger(L,1);
     return luaThread->luaDialogStart(L,dialog);
 }
@@ -59,7 +65,8 @@ AddDialogLuaFunct(lua_ExecDialog,execDialog);
 
 
 
-LuaDialog::WidgetContainer::WidgetContainer(LuaDialog::LuaWidgetType t,void* w){
+LuaDialog::WidgetContainer::WidgetContainer(LuaDialog::LuaWidgetType t,void* w)
+{
     this->type=t;
     this->widget=w;
 }
@@ -68,23 +75,27 @@ std::vector<QDialog*> Dialogs;
 std::vector<LuaDialog::WidgetContainer> Widgets;
 
 //Gui Thread Starts Dialog
-void LuaDialog::StartDialog(){
+void LuaDialog::StartDialog()
+{
     Dialogs.at(CurrentRunningDialog)->open();
     luaThread->luaDialogClosed();
 }
 
 
 //Call function in the Lua_Registry with index ref in lua_State L
-void CallFunction(lua_State* L,int ref){
+void CallFunction(lua_State* L,int ref)
+{
     //push callfunction to top of stack
     lua_geti(L,LUA_REGISTRYINDEX,ref);
-    if(lua_pcall(L,0,0,0)!=0){
+    if(lua_pcall(L,0,0,0)!=0)
+    {
         //handel Errors
         printf("Error: %s\n",lua_tostring(L,-1));
     }
 }
 
-LuaLabel::LuaLabel(QDialog* parent,QString string){
+LuaLabel::LuaLabel(QDialog* parent,QString string)
+{
     this->setParent(parent);
     this->setText(string);
     L=nullptr;
@@ -92,11 +103,13 @@ LuaLabel::LuaLabel(QDialog* parent,QString string){
     index = Widgets.size();
     Widgets.push_back(LuaDialog::WidgetContainer(LuaDialog::Label,this));
 }
-void LuaLabel::luaFunction(){
+void LuaLabel::luaFunction()
+{
     CallFunction(L,ref);
 }
 
-LuaButton::LuaButton(QDialog* parent,QString string, int r,lua_State* l){
+LuaButton::LuaButton(QDialog* parent,QString string, int r,lua_State* l)
+{
     this->setParent(parent);
     this->setText(string);
     L=l;
@@ -104,22 +117,26 @@ LuaButton::LuaButton(QDialog* parent,QString string, int r,lua_State* l){
     index=Widgets.size();
     Widgets.push_back(LuaDialog::WidgetContainer(LuaDialog::Button,this));
 }
-void LuaButton::luaFunction(){
+void LuaButton::luaFunction()
+{
     CallFunction(L,ref);
 }
 
-LuaLineEdit::LuaLineEdit(QDialog* parent){
+LuaLineEdit::LuaLineEdit(QDialog* parent)
+{
     this->setParent(parent);
     L=nullptr;
     ref=0;
     index=Widgets.size();
     Widgets.push_back(LuaDialog::WidgetContainer(LuaDialog::LineEdit,this));
 }
-void LuaLineEdit::luaFunction(){
+void LuaLineEdit::luaFunction()
+{
     CallFunction(L,ref);
 }
 
-LuaComboBox::LuaComboBox(QDialog* parent,QStringList list){
+LuaComboBox::LuaComboBox(QDialog* parent,QStringList list)
+{
     this->setParent(parent);
     this->insertItems(0,list);
     L=nullptr;
@@ -127,7 +144,8 @@ LuaComboBox::LuaComboBox(QDialog* parent,QStringList list){
     index=Widgets.size();
     Widgets.push_back(LuaDialog::WidgetContainer(LuaDialog::Dropdown,this));
 }
-void LuaComboBox::luaFunction(){
+void LuaComboBox::luaFunction()
+{
     CallFunction(L,ref);
 }
 
@@ -137,7 +155,8 @@ void LuaComboBox::luaFunction(){
 #define LUADIALOG(c_pntr,name)\
 int name(lua_State* L){return luaThread->luaDialogFunction(L,c_pntr);}
 
-int Dialog_New(lua_State* L){
+int Dialog_New(lua_State* L)
+{
     int w=luaL_checkinteger(L,1);
     int h=luaL_checkinteger(L,2);
     QDialog* newDialog = new QDialog(LuaFront::panel->window());
@@ -151,7 +170,8 @@ LUADIALOG(Dialog_New,lua_newDialog)
 AddDialogLuaFunct(lua_newDialog,newDialog);
 
 
-int Dialog_Label(lua_State* L){
+int Dialog_Label(lua_State* L)
+{
     int id = lua_tointeger(L,-6);
     QString string=lua_tostring(L,-5);
     int x = lua_tointeger(L,-4);
@@ -168,7 +188,8 @@ int Dialog_Label(lua_State* L){
 LUADIALOG(Dialog_Label,lua_newLabel)
 AddDialogLuaFunct(lua_newLabel,newLabel);
 
-int Dialog_Button(lua_State* L){
+int Dialog_Button(lua_State* L)
+{
     int id = luaL_checkinteger(L,1);
     QString string=luaL_checkstring(L,2);
     luaL_checktype(L,3, LUA_TFUNCTION);
@@ -190,7 +211,8 @@ int Dialog_Button(lua_State* L){
 LUADIALOG(Dialog_Button,lua_newButton)
 AddDialogLuaFunct(lua_newButton,newButton);
 
-int Dialog_LineEdit(lua_State* L){
+int Dialog_LineEdit(lua_State* L)
+{
     int id =luaL_checkinteger(L,1);
     QDialog* dialog = Dialogs[id];
     LuaLineEdit* lineEdit = new LuaLineEdit(dialog);
@@ -201,7 +223,8 @@ int Dialog_LineEdit(lua_State* L){
 LUADIALOG(Dialog_LineEdit,lua_newLineEdit)
 AddDialogLuaFunct(lua_newLineEdit,newLineEdit);
 
-int Dialog_setGeometry(lua_State*L){
+int Dialog_setGeometry(lua_State*L)
+{
     int id = luaL_checkinteger(L,1);
     int x = luaL_checkinteger(L,2);
     int y = luaL_checkinteger(L,3);
@@ -213,10 +236,12 @@ int Dialog_setGeometry(lua_State*L){
 LUADIALOG(Dialog_setGeometry,lua_setGeometry)//no need
 AddDialogLuaFunct(lua_setGeometry,setGeometry);
 
-int Dialog_getText(lua_State*L){
+int Dialog_getText(lua_State*L)
+{
     int id = luaL_checkinteger(L,1);
     QString text="default";
-    switch (Widgets[id].type){
+    switch (Widgets[id].type)
+    {
     case LuaDialog::LineEdit:
         text = static_cast<LuaLineEdit*>(Widgets[id].widget)->text();
         break;
@@ -239,12 +264,14 @@ int Dialog_getText(lua_State*L){
 LUADIALOG(Dialog_getText,lua_getText)//no need
 AddDialogLuaFunct(lua_getText,getText);
 
-int Dialog_Dropdown(lua_State* L){
+int Dialog_Dropdown(lua_State* L)
+{
     int id = luaL_checkinteger(L,1);
     QStringList list;
     luaL_checktype(L,2,LUA_TTABLE);
     lua_pushnil(L);  // first key
-    while (lua_next(L, -2) != 0) {
+    while (lua_next(L, -2) != 0) 
+    {
         list.append(lua_tostring(L,-1));//'value' (at index -1)
         lua_pop(L, 1);//remove 'value' leaving 'key' for lua_next
     }
@@ -256,13 +283,15 @@ int Dialog_Dropdown(lua_State* L){
 LUADIALOG(Dialog_Dropdown,lua_dropdown)
 AddDialogLuaFunct(lua_dropdown,dropDown);
 
-int Dialog_setDropDownItems(lua_State* L){
+int Dialog_setDropDownItems(lua_State* L)
+{
     int id = luaL_checkinteger(L,1);
     QStringList list;
     luaL_checktype(L,2,LUA_TTABLE);
     luaL_checktype(L,2,LUA_TTABLE);
     lua_pushnil(L);  // first key
-    while (lua_next(L, -2) != 0) {
+    while (lua_next(L, -2) != 0) 
+    {
         list.append(lua_tostring(L,-1));//'value' (at index -1)
         lua_pop(L, 1);//remove 'value' leaving 'key' for lua_next
     }
@@ -276,7 +305,8 @@ LUADIALOG(Dialog_setDropDownItems,lua_setDropDownItems)//no need?
 AddDialogLuaFunct(lua_setDropDownItems,setDropDownItems);
 
 
-int Dialog_Destroy(lua_State* L){
+int Dialog_Destroy(lua_State* L)
+{
     int id = luaL_checkinteger(L,1);
     Dialogs[id]->close();
     Dialogs.clear();
@@ -286,7 +316,8 @@ int Dialog_Destroy(lua_State* L){
 LUADIALOG(Dialog_Destroy,lua_destroy)
 AddDialogLuaFunct(lua_destroy,destroy);
 
-int Dialog_OpenFile(lua_State* L){
+int Dialog_OpenFile(lua_State* L)
+{
     QString filename = luaL_checkstring(L,1);
     QString initialDirectory = luaL_checkstring(L,2);
     QString filter = luaL_checkstring(L,3);

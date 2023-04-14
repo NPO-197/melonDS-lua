@@ -17,7 +17,8 @@ LuaConsolDialog::LuaConsolDialog(QWidget* parent, QFileInfo* file)
 }
 
 
-void LuaConsolDialog::onReset(){
+void LuaConsolDialog::onReset()
+{
     printf("reseting...");
     if (luaThread!=nullptr){
         luaThread->flagTerminated=true;
