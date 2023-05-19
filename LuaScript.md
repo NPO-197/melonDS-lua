@@ -33,8 +33,8 @@ First we create a canvas at 0,0 (the top left of the screen), with width and hei
 
 `StateSave()` / `StateLoad()` creates / loads a savestate from the given filename.
 
-`Readu8(int address)` / `Readu16` / `Readu32` read unsined data from RAM in format specified.
-`Reads8(int address)`/ `Reads16` / `Reads32` read sined data from RAM in format specified
+`Readu8(int address)` / `Readu16` / `Readu32` read unsigned data from RAM in format specified.
+`Reads8(int address)`/ `Reads16` / `Reads32` read signed data from RAM in format specified
 
 `MelonPrint` print plain text to console
 
