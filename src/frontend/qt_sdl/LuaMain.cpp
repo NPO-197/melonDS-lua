@@ -573,5 +573,12 @@ int Lua_setPadding(lua_State* L) //TODO: Currently only works well with force in
 }
 AddLuaFunction(Lua_setPadding,SetPadding);
 
+int Lua_frameAdvance(lua_State *L)
+{
+    NDS::RunFrame();
+    return 0;
+}
+AddLuaFunction(Lua_frameAdvance, FrameAdvance);
+
 }//LuaFunctionDefinition
 }//LuaScript

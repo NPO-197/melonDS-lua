@@ -13,32 +13,39 @@ function _Update()
     Flip()
 end
 ```
-First we create a canvas at 0,0 (the top left of the screen), with width and height of 100 pixels.
+`MakeCanvas(int x, int y, int width, int height)` creates a canvas at (0, 0) (the top left of the screen), with width and height of 100 pixels.
 
-`canvas` contains the index of the canavs we just created. `SetCanvas(canvas)` sets the current canavs so all drawing functions know which canvas to draw to.
+`canvas` contains the index of the canavs we just created. `SetCanvas(Canvas canvas)` sets the current canvas so all drawing functions know which canvas to draw to.
 
-`function _Update()` is a special function that if defined in a lua script will be called once every frame, we don't need it in this example, but if you need to run some code, or update what is drawn to the screen every frame, this is the way to do it.
+`function _Update()` is a special function that if defined in a lua script will be called once every frame. We don't need it in this example, but if you need to run some code, or update what is drawn to the screen every frame, this is the way to do it.
 
-`ClearOverlay()` clears the canavs
+`ClearOverlay()` clears the canvas.
 
-`Text()` draws the text to the selected canvas at a x,y (y is the bottom of the text not the top unlike in bizhawk) with rgb color font size and font family, qt5 uses a font matching algorithm to find the font family that matches the font provided. 
+`Text(int x, int y, str text, int rgb, int font_size, str font_family)` draws the given `text` to the selected canvas at coordinate (`x`, `y`) (note that y is the bottom of the canvas and not the top, unlike in bizhawk) with color `rgb`, using `font_size` and `font_family`. QT5 uses a font matching algorithm to find the font family that matches the provided string.
 
-`Flip()` flips between a display buffer and an image buffer, this is to prevent MelonDS from displaying a frame that the lua script hasn't finished drawing yet, **you must call flip after making any changes to the image buffer to be seen.**
+`Flip()` flips between a display buffer and an image buffer. This is to prevent MelonDS from displaying a frame that the lua script hasn't finished drawing yet. **You must call flip after making any changes to the image buffer to be seen.**
 
 ### Other Functions
 
-`GetMouse()` similar to bizhawk's [input.getmouse()](https://tasvideos.org/Bizhawk/LuaFunctions)
+`GetMouse()` Similar to bizhawk's [input.getmouse()](https://tasvideos.org/Bizhawk/LuaFunctions)
 
 ~~`NextFrame()` blocks until a signal from the emulator thread that a frame has passed then continues. To help provide compatability with bizhawks implementation, prefer `function _Update()` instead of "while true" loops.~~
 
-`StateSave()` / `StateLoad()` creates / loads a savestate from the given filename.
+`StateSave(str filename)` / `StateLoad(str filename)` Creates / loads a savestate with the given filename.
 
-`Readu8(int address)` / `Readu16` / `Readu32` read unsigned data from RAM in format specified.
-`Reads8(int address)`/ `Reads16` / `Reads32` read signed data from RAM in format specified
+`Readu8(int address)` / `Readu16(int address)` / `Readu32(int address)` Read unsigned data from RAM in the format specified.
 
-`MelonPrint` print plain text to console
+`Reads8(int address)`/ `Reads16(int address)` / `Reads32(int address)` Read signed data from RAM in the format specified.
 
-`MelonClear` clear console 
+`MelonPrint(str text)` Print plain text to the console.
+
+`MelonClear()` Clear the console.
+
+`NDSTapDown(x, y)` Tap the screen at coordinate (x, y). Note that y = 0 is the top of the window, not the bottom.
+
+`NDSTapUp()` Stop tapping the screen.
+
+`FrameAdvance()` Advance the emulator by one frame.
 
 ## Other Examples
 
@@ -53,5 +60,13 @@ function _Update()
     Text(0,10,"Pos:"..Pos,0xffffff,9,"Franklin Gothic Medium")
     Flip()
 end
+```
 
+Tap the screen, releasing it one frame later.
+
+```Lua
+NDSTapDown(150, 300)
+FrameAdvance()
+NDSTapUp()
+MelonPrint("Tapped")
 ```
