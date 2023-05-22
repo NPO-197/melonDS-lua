@@ -47,6 +47,8 @@ end
 
 `FrameAdvance()` Advance the emulator by one frame.
 
+`GetRegistersARM7() / GetRegistersARM9()` Get a table containing the values of the ARM7 or ARM9 processor's registers, respectively.
+
 ## Other Examples
 
 TODO: add more examples.
@@ -69,4 +71,18 @@ NDSTapDown(150, 300)
 FrameAdvance()
 NDSTapUp()
 MelonPrint("Tapped")
+```
+
+Print the registers of both processors to the Lua console.
+```Lua
+r7 = GetRegistersARM7()
+r9 = GetRegistersARM9()
+
+for i = 0, 15 do
+    MelonPrint("[ARM7] r" .. i .. ": " .. r7[i])
+end
+
+for i = 0, 15 do
+    MelonPrint("[ARM9] r" .. i .. ": " .. r9[i])
+end
 ```

@@ -10,6 +10,7 @@
 #include  "main.h"
 #include "types.h"
 #include "NDS.h"
+#include "ARM.h"
 
 #include <SDL_joystick.h>
 #include "Input.h"
@@ -575,10 +576,36 @@ AddLuaFunction(Lua_setPadding,SetPadding);
 
 int Lua_frameAdvance(lua_State *L)
 {
-    NDS::RunFrame();
-    return 0;
+    return NDS::RunFrame();
 }
 AddLuaFunction(Lua_frameAdvance, FrameAdvance);
+
+// ye idk if this is the best way to do this
+// variant: 0 = ARM7, 1 = ARM9
+int Lua_getRegisters(lua_State *L, u32 variant)
+{
+    lua_createtable(L, 0, 17);
+    for (u32 i = 0; i < 16; i++)
+    {
+        lua_pushinteger(L, variant ? NDS::ARM9->R[i] : NDS::ARM7->R[i]);
+        lua_seti(L, -2, i);
+    }
+    return 1;
+}
+
+int Lua_getRegistersARM7(lua_State *L)
+{
+    Lua_getRegisters(L, 0);
+    return 1;
+}
+AddLuaFunction(Lua_getRegistersARM7, GetRegistersARM7);
+
+int Lua_getRegistersARM9(lua_State *L)
+{
+    Lua_getRegisters(L, 1);
+    return 1;
+}
+AddLuaFunction(Lua_getRegistersARM9, GetRegistersARM9);
 
 }//LuaFunctionDefinition
 }//LuaScript
