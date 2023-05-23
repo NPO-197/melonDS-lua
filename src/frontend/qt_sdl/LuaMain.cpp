@@ -607,5 +607,27 @@ int Lua_getRegistersARM9(lua_State *L)
 }
 AddLuaFunction(Lua_getRegistersARM9, GetRegistersARM9);
 
+int Lua_getRegister(lua_State *L, ARM *processor, u32 reg)
+{
+    lua_pushinteger(L, processor->R[reg]);
+    return 1;
+}
+
+int Lua_getRegisterARM7(lua_State *L)
+{
+    u32 reg = luaL_checkinteger(L, 1);
+    Lua_getRegister(L, NDS::ARM7, reg);
+    return 1;
+}
+AddLuaFunction(Lua_getRegisterARM7, GetRegisterARM7);
+
+int Lua_getRegisterARM9(lua_State *L)
+{
+    u32 reg = luaL_checkinteger(L, 1);
+    Lua_getRegister(L, NDS::ARM9, reg);
+    return 1;
+}
+AddLuaFunction(Lua_getRegisterARM9, GetRegisterARM9);
+
 }//LuaFunctionDefinition
 }//LuaScript
