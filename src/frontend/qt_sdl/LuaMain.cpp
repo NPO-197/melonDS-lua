@@ -629,5 +629,61 @@ int Lua_getRegisterARM9(lua_State *L)
 }
 AddLuaFunction(Lua_getRegisterARM9, GetRegisterARM9);
 
+int Lua_getCPSR(lua_State *L, ARM *processor)
+{
+    CPSR cpsr;
+
+    // well this works but it would be a lot cuter if C++ had reflection
+    cpsr.N = processor->CPSR & 0x01;
+    cpsr.Z = processor->CPSR & 0x02;
+    cpsr.C = processor->CPSR & 0x04;
+    cpsr.V = processor->CPSR & 0x08;
+    cpsr.Q = processor->CPSR & 0x10;
+    cpsr.RESERVED = 0;
+    cpsr.I = processor->CPSR & 0x1000000;
+    cpsr.F = processor->CPSR & 0x2000000;
+    cpsr.T = processor->CPSR & 0x4000000;
+    cpsr.M = processor->CPSR & 0xF8000000;
+
+    lua_createtable(L, 0, 9);
+
+    lua_pushboolean(L, cpsr.N);
+    lua_setfield(L, -2, "N");
+    lua_pushboolean(L, cpsr.Z);
+    lua_setfield(L, -2, "Z");
+    lua_pushboolean(L, cpsr.C);
+    lua_setfield(L, -2, "C");
+    lua_pushboolean(L, cpsr.V);
+    lua_setfield(L, -2, "V");
+    lua_pushboolean(L, cpsr.Q);
+    lua_setfield(L, -2, "Q");
+    lua_pushinteger(L, cpsr.RESERVED);
+    lua_setfield(L, -2, "RESERVED");
+    lua_pushboolean(L, cpsr.I);
+    lua_setfield(L, -2, "I");
+    lua_pushboolean(L, cpsr.F);
+    lua_setfield(L, -2, "F");
+    lua_pushboolean(L, cpsr.T);
+    lua_setfield(L, -2, "T");
+    lua_pushboolean(L, cpsr.M);
+    lua_setfield(L, -2, "M");
+
+    return 1;
+}
+
+int Lua_getCPSRARM7(lua_State *L)
+{
+    Lua_getCPSR(L, NDS::ARM7);
+    return 1;
+}
+AddLuaFunction(Lua_getCPSRARM7, GetCPSRARM7);
+
+int Lua_getCPSRARM9(lua_State *L)
+{
+    Lua_getCPSR(L, NDS::ARM9);
+    return 1;
+}
+AddLuaFunction(Lua_getCPSRARM9, GetCPSRARM9);
+
 }//LuaFunctionDefinition
 }//LuaScript

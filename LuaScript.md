@@ -47,7 +47,11 @@ end
 
 `FrameAdvance()` Advance the emulator by one frame.
 
-`GetRegistersARM7() / GetRegistersARM9()` Get a table containing the values of the ARM7 or ARM9 processor's registers, respectively.
+`GetRegisterARM7(int n) / GetRegistersARM9(int n)` Get the value of the specified processor's *n*th register.
+
+`GetRegistersARM7() / GetRegistersARM9()` Get a table containing the values of the ARM7 or ARM9 processor's registers, respectively. This function does not differentiate between numbered registers (r0, r1, r2...) and registers named by convention (PC, LR etc).
+
+`GetCPSRARM7() / GetCPSRARM9()` Get a table whose keys are the flags of the CPSR register of the specified processor.
 
 ## Other Examples
 
@@ -73,7 +77,7 @@ NDSTapUp()
 MelonPrint("Tapped")
 ```
 
-Print the registers of both processors to the Lua console.
+Print the registers and CPSR of both processors to the Lua console.
 ```Lua
 r7 = GetRegistersARM7()
 r9 = GetRegistersARM9()
@@ -84,5 +88,13 @@ end
 
 for i = 0, 15 do
     MelonPrint("[ARM9] r" .. i .. ": " .. r9[i])
+end
+
+for k, v in pairs(GetCPSRARM7()) do
+    MelonPrint(k .. ": " .. tostring(v))
+end
+
+for k, v in pairs(GetCPSRARM9()) do
+    MelonPrint(k .. ": " .. tostring(v))
 end
 ```
