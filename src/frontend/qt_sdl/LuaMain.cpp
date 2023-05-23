@@ -581,28 +581,28 @@ int Lua_frameAdvance(lua_State *L)
 AddLuaFunction(Lua_frameAdvance, FrameAdvance);
 
 // ye idk if this is the best way to do this
-// variant: 0 = ARM7, 1 = ARM9
-int Lua_getRegisters(lua_State *L, u32 variant)
+int Lua_getRegisters(lua_State *L, ARM *processor)
 {
     lua_createtable(L, 0, 17);
-    for (u32 i = 0; i < 16; i++)
+
+    for (u32 reg = 0; reg < 16; reg++)
     {
-        lua_pushinteger(L, variant ? NDS::ARM9->R[i] : NDS::ARM7->R[i]);
-        lua_seti(L, -2, i);
+        lua_pushinteger(L, processor->R[reg]);
+        lua_seti(L, -2, reg);
     }
     return 1;
 }
 
 int Lua_getRegistersARM7(lua_State *L)
 {
-    Lua_getRegisters(L, 0);
+    Lua_getRegisters(L, NDS::ARM7);
     return 1;
 }
 AddLuaFunction(Lua_getRegistersARM7, GetRegistersARM7);
 
 int Lua_getRegistersARM9(lua_State *L)
 {
-    Lua_getRegisters(L, 1);
+    Lua_getRegisters(L, NDS::ARM9);
     return 1;
 }
 AddLuaFunction(Lua_getRegistersARM9, GetRegistersARM9);
