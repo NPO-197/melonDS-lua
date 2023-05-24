@@ -55,7 +55,7 @@ struct OverlayCanvas
     void flip();//used to swap buffers
     bool flipped; //used to signal update to graphics.
 };
-
+  
 typedef struct CPSR             // structure representing the CPSR register
 {
     unsigned int M        : 5;  // processor mode, see https://developer.arm.com/documentation/ddi0240/b/programmer-s-model/the-program-status-registers/the-control-bits for specific values
@@ -70,6 +70,7 @@ typedef struct CPSR             // structure representing the CPSR register
     unsigned int N        : 1;  // negative/less than
 } CPSR;
 
+void luaResetOSD();
 void luaUpdate();
 void luaPrint(QString string);
 void luaClearConsole();

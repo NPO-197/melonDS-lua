@@ -69,6 +69,7 @@ void LuaConsoleDialog::closeEvent(QCloseEvent *event)
 {
     onStop();
     LuaDialog=nullptr;
+    LuaOverlays.clear();
     event->accept();
 }
 
@@ -214,6 +215,16 @@ void OverlayCanvas::flip()
 std::vector<OverlayCanvas> LuaOverlays;
 OverlayCanvas* CurrentCanvas;
 QHash<QString , QImage> ImageHash;
+
+void luaResetOSD()
+{
+    for (auto lo = LuaOverlays.begin(); lo != LuaOverlays.end();)
+    {
+        OverlayCanvas& overlay = *lo;
+        overlay.GLTextureLoaded = false;
+        lo++;
+    }
+}
 
 int RightPadding = 0;
 int BottomPadding = 0;
