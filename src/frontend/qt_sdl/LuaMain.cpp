@@ -10,6 +10,7 @@
 #include  "main.h"
 #include "types.h"
 #include "NDS.h"
+#include "ARM.h"
 
 #include <SDL_joystick.h>
 #include "Input.h"
@@ -583,6 +584,114 @@ int Lua_setPadding(lua_State* L) //TODO: Currently only works well with force in
     return 0;
 }
 AddLuaFunction(Lua_setPadding,SetPadding);
+
+int Lua_frameAdvance(lua_State *L)
+{
+    return NDS::RunFrame();
+}
+AddLuaFunction(Lua_frameAdvance, FrameAdvance);
+
+// ye idk if this is the best way to do this
+int Lua_getRegisters(lua_State *L, ARM *processor)
+{
+    lua_createtable(L, 0, 17);
+
+    for (u32 reg = 0; reg < 16; reg++)
+    {
+        lua_pushinteger(L, processor->R[reg]);
+        lua_seti(L, -2, reg);
+    }
+    return 1;
+}
+
+int Lua_getRegistersARM7(lua_State *L)
+{
+    Lua_getRegisters(L, NDS::ARM7);
+    return 1;
+}
+AddLuaFunction(Lua_getRegistersARM7, GetRegistersARM7);
+
+int Lua_getRegistersARM9(lua_State *L)
+{
+    Lua_getRegisters(L, NDS::ARM9);
+    return 1;
+}
+AddLuaFunction(Lua_getRegistersARM9, GetRegistersARM9);
+
+int Lua_getRegister(lua_State *L, ARM *processor, u32 reg)
+{
+    lua_pushinteger(L, processor->R[reg]);
+    return 1;
+}
+
+int Lua_getRegisterARM7(lua_State *L)
+{
+    u32 reg = luaL_checkinteger(L, 1);
+    Lua_getRegister(L, NDS::ARM7, reg);
+    return 1;
+}
+AddLuaFunction(Lua_getRegisterARM7, GetRegisterARM7);
+
+int Lua_getRegisterARM9(lua_State *L)
+{
+    u32 reg = luaL_checkinteger(L, 1);
+    Lua_getRegister(L, NDS::ARM9, reg);
+    return 1;
+}
+AddLuaFunction(Lua_getRegisterARM9, GetRegisterARM9);
+
+int Lua_getCPSR(lua_State *L, ARM *processor)
+{
+    CPSR cpsr;
+    u32 procCPSR = processor->CPSR;
+
+    cpsr.N = procCPSR & 0x80000000;
+    cpsr.Z = procCPSR & 0x40000000;
+    cpsr.C = procCPSR & 0x20000000;
+    cpsr.V = procCPSR & 0x10000000;
+    cpsr.Q = procCPSR & 0x80000000;
+    cpsr.I = procCPSR & 0x80;
+    cpsr.F = procCPSR & 0x40;
+    cpsr.T = procCPSR & 0x20;
+    cpsr.M = procCPSR & 0x1F;
+
+    lua_createtable(L, 0, 9);
+
+    lua_pushboolean(L, cpsr.N);
+    lua_setfield(L, -2, "N");
+    lua_pushboolean(L, cpsr.Z);
+    lua_setfield(L, -2, "Z");
+    lua_pushboolean(L, cpsr.C);
+    lua_setfield(L, -2, "C");
+    lua_pushboolean(L, cpsr.V);
+    lua_setfield(L, -2, "V");
+    lua_pushboolean(L, cpsr.Q);
+    lua_setfield(L, -2, "Q");
+    lua_pushboolean(L, cpsr.I);
+    lua_setfield(L, -2, "I");
+    lua_pushboolean(L, cpsr.F);
+    lua_setfield(L, -2, "F");
+    lua_pushboolean(L, cpsr.T);
+    lua_setfield(L, -2, "T");
+    lua_pushinteger(L, cpsr.M);
+    lua_setfield(L, -2, "M");
+
+    return 1;
+}
+
+int Lua_getCPSRARM7(lua_State *L)
+{
+    Lua_getCPSR(L, NDS::ARM7);
+    return 1;
+}
+AddLuaFunction(Lua_getCPSRARM7, GetCPSRARM7);
+
+int Lua_getCPSRARM9(lua_State *L)
+{
+    Lua_getCPSR(L, NDS::ARM9);
+    return 1;
+}
+AddLuaFunction(Lua_getCPSRARM9, GetCPSRARM9);
 
 }//LuaFunctionDefinition
 }//LuaScript
