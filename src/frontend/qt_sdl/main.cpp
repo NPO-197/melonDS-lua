@@ -3443,6 +3443,7 @@ void MainWindow::onUpdateVideoSettings(bool glchange)
 {
     if (glchange)
     {
+        LuaScript::luaResetOSD();
         emuThread->emuPause();
         if (hasOGL) emuThread->deinitContext();
 
