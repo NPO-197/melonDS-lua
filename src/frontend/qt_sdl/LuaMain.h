@@ -56,18 +56,18 @@ struct OverlayCanvas
     bool flipped; //used to signal update to graphics.
 };
 
-typedef struct CPSR             // structure representing the CPSR register
+typedef struct CPSR      // structure representing the CPSR register (high bits first)
 {
-    unsigned int M        : 5;  // processor mode, see https://developer.arm.com/documentation/ddi0240/b/programmer-s-model/the-program-status-registers/the-control-bits for specific values
-    unsigned int T        : 1;  // thumb state enabled
-    unsigned int F        : 1;  // FIQ disabled
-    unsigned int I        : 1;  // IRQ disabled
-    unsigned int RESERVED : 19; // These bits are used in later processor models, but not the ones the DS uses 
-    unsigned int Q        : 1;  // sticky overflow
-    unsigned int V        : 1;  // overflow
-    unsigned int C        : 1;  // carry/borrow/extend
-    unsigned int Z        : 1;  // zero
-    unsigned int N        : 1;  // negative/less than
+    unsigned int N : 1;  // negative/less than flag
+    unsigned int Z : 1;  // zero flag
+    unsigned int C : 1;  // carry flag
+    unsigned int V : 1;  // overflow flag
+    unsigned int Q : 1;  // sticky overflow
+    unsigned int   : 19; // These bits are used in later processor models, but not the ones the DS uses 
+    unsigned int I : 1;  // IRQ disabled
+    unsigned int F : 1;  // FIQ disabled
+    unsigned int T : 1;  // thumb state enabled
+    unsigned int M : 5;  // processor mode, see https://developer.arm.com/documentation/ddi0240/b/programmer-s-model/the-program-status-registers/the-control-bits for specific values
 } CPSR;
 
 void luaUpdate();

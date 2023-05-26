@@ -632,18 +632,17 @@ AddLuaFunction(Lua_getRegisterARM9, GetRegisterARM9);
 int Lua_getCPSR(lua_State *L, ARM *processor)
 {
     CPSR cpsr;
+    u32 procCPSR = processor->CPSR;
 
-    // well this works but it would be a lot cuter if C++ had reflection
-    cpsr.N = processor->CPSR & 0x01;
-    cpsr.Z = processor->CPSR & 0x02;
-    cpsr.C = processor->CPSR & 0x04;
-    cpsr.V = processor->CPSR & 0x08;
-    cpsr.Q = processor->CPSR & 0x10;
-    cpsr.RESERVED = 0;
-    cpsr.I = processor->CPSR & 0x1000000;
-    cpsr.F = processor->CPSR & 0x2000000;
-    cpsr.T = processor->CPSR & 0x4000000;
-    cpsr.M = processor->CPSR & 0xF8000000;
+    cpsr.N = procCPSR & 0x80000000;
+    cpsr.Z = procCPSR & 0x40000000;
+    cpsr.C = procCPSR & 0x20000000;
+    cpsr.V = procCPSR & 0x10000000;
+    cpsr.Q = procCPSR & 0x80000000;
+    cpsr.I = procCPSR & 0x80;
+    cpsr.F = procCPSR & 0x40;
+    cpsr.T = procCPSR & 0x20;
+    cpsr.M = procCPSR & 0x1F;
 
     lua_createtable(L, 0, 9);
 
@@ -657,15 +656,13 @@ int Lua_getCPSR(lua_State *L, ARM *processor)
     lua_setfield(L, -2, "V");
     lua_pushboolean(L, cpsr.Q);
     lua_setfield(L, -2, "Q");
-    lua_pushinteger(L, cpsr.RESERVED);
-    lua_setfield(L, -2, "RESERVED");
     lua_pushboolean(L, cpsr.I);
     lua_setfield(L, -2, "I");
     lua_pushboolean(L, cpsr.F);
     lua_setfield(L, -2, "F");
     lua_pushboolean(L, cpsr.T);
     lua_setfield(L, -2, "T");
-    lua_pushboolean(L, cpsr.M);
+    lua_pushinteger(L, cpsr.M);
     lua_setfield(L, -2, "M");
 
     return 1;
