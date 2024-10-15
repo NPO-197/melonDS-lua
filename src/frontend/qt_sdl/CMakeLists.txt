@@ -78,7 +78,7 @@ set(CMAKE_AUTORCC ON)
 
 find_package(Threads REQUIRED)
 find_package(PkgConfig REQUIRED)
-## find_package(Lua REQUIRED) 
+## find_package(Lua197 REQUIRED) 
 
 if (BUILD_STATIC)
     list(APPEND PKG_CONFIG_EXECUTABLE "--static")
