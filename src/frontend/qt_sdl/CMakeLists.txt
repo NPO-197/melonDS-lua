@@ -89,7 +89,7 @@ pkg_check_modules(LibArchive REQUIRED IMPORTED_TARGET libarchive)
 pkg_check_modules(Zstd REQUIRED IMPORTED_TARGET libzstd)
 ## pkg_check_modules(LUA REQUIRED IMPORTED_TARGET lua>=5.1)
 
-fix_interface_includes(PkgConfig::SDL2 PkgConfig::LibArchive)
+fix_interface_includes(PkgConfig::SDL2 PkgConfig::LibArchive ${LUA_LIBRARIES})
 
 add_compile_definitions(ARCHIVE_SUPPORT_ENABLED)
 
