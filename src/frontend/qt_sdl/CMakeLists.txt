@@ -78,7 +78,7 @@ set(CMAKE_AUTORCC ON)
 
 find_package(Threads REQUIRED)
 find_package(PkgConfig REQUIRED)
-## find_package(Lua REQUIRED) 
+find_package(Lua REQUIRED) 
 
 if (BUILD_STATIC)
     list(APPEND PKG_CONFIG_EXECUTABLE "--static")
@@ -87,7 +87,7 @@ endif()
 pkg_check_modules(SDL2 REQUIRED IMPORTED_TARGET sdl2)
 pkg_check_modules(LibArchive REQUIRED IMPORTED_TARGET libarchive)
 pkg_check_modules(Zstd REQUIRED IMPORTED_TARGET libzstd)
-pkg_check_modules(LUA REQUIRED IMPORTED_TARGET lua>=5.1)
+## pkg_check_modules(LUA REQUIRED IMPORTED_TARGET lua>=5.1)
 
 fix_interface_includes(PkgConfig::SDL2 PkgConfig::LibArchive)
 
