@@ -418,9 +418,13 @@ template <typename T, bool Be=false> int Lua_WriteData(lua_State* L)
 {
 	u32 address = luaL_checkinteger(L,1);
 	s64 value = luaL_checkinteger(L,2);
-	u8* bits = (u8*)(&value)+(sizeof(s64)-sizeof(T));
 	memoryDomain domain = L_checkForMemoryDomain(L,3);
-	if (address>domain.size-sizeof(T))return 0;
+	if (address>domain.size-sizeof(T)){
+		luaL_error(L,"Given address outside current memory domain!");
+		return 0;
+	}
+	u8 bits[sizeof(s64)];
+	memcpy(bits,&value,sizeof(s64));
 	if (Be) byteswap(bits,sizeof(T));
 	//Using Two's complement so no need to check for sign...
 	domain.write(bits,address,sizeof(T));

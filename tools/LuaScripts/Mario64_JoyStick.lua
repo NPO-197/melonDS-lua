@@ -9,16 +9,15 @@ local RightSick = {x=2,y=3}
 local Triggers = {x=4,y=5}
 
 --shocoman's hack uses RTCOM_DATA_OUTPUT register to send analog stick information from the "3ds"
-local shocomanAddress = 0x0C7FFDF0 
-
+local shocomanAddress = 0x027FFDF0
 function _Update()
     local bytes = getPad(LeftStick,true)
     print(string.format("Stick:%x",bytes))
-    memory.write_u32_le(bytes,shocomanAddress) --pass stick information to shocoman's hack
+    memory.write_u32_le(shocomanAddress,bytes,"ARM9 System Bus") --pass stick information to shocoman's hack
     bytes=0
     if input.getjoystick(Triggers.y)>0 then bytes = 0x8000 end
     if input.getjoystick(Triggers.x)>0 then bytes = bytes|0x7f00 end
-    memory.write_u32_le(bytes,shocomanAddress+4) --turns camera left and right
+    memory.write_u32_le(shocomanAddress+4,bytes,"ARM9 System Bus") --turns camera left and right
 end
 
 -- Get axis values and pack into a single 16bit number
