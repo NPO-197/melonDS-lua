@@ -130,6 +130,7 @@ private slots:
     void onOpenPowerManagement();
     void onOpenLuaScript();
     void onOpenDateTime();
+    void onDateTimeDialogFinished(int res);
     void onEnableCheats(bool checked);
     void onSetupCheats();
     void onCheatsDialogFinished(int res);
